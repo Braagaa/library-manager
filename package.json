@@ -4,17 +4,20 @@
   "description": "A simple library manager app that add, updates and deletes books",
   "main": "index.js",
   "scripts": {
-    "watch": "onchange -i -k app.js -- node app.js",
-    "start:developer": "start http://localhost:3000/ && npm run watch",
+    "server": "node app.js",
+    "proxy": "delay 3 && browser-sync start --proxy localhost:3000 --files app.js --watch app.js",
+    "open": "start http://localhost:3000/",
+    "start": "npm-run-all --parallel server proxy",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Michael Braga",
   "license": "MIT",
   "devDependencies": {
+    "browser-sync": "^2.26.3",
     "csso": "^3.5.1",
+    "delay-cli": "^1.1.0",
     "npm-run-all": "^4.1.5",
-    "onchange": "^5.2.0",
-    "reload": "^2.4.0"
+    "onchange": "^5.2.0"
   },
   "dependencies": {
     "express": "^4.16.4",
