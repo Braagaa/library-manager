@@ -1,0 +1,20 @@
+{
+  "development": {
+    "database": "database_development",
+    "dialect": "sqlite",
+    "operatorsAliases": false,
+    "storage": "./db/library.db"
+  },
+  "test": {
+    "database": "database_test",
+    "dialect": "sqlite",
+    "operatorsAliases": false,
+    "storage": "./db/library.db"
+  },
+  "production": {
+    "database": "database_production",
+    "dialect": "mysql",
+    "operatorsAliases": false,
+    "storage": "./db/library.db"
+  }
+}
