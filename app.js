@@ -1,4 +1,5 @@
 const express = require('express');
+const bodyParser = require('body-parser');
 const {join} = require('path');
 const {Book} = require('./models/');
 const {home, books} = require('./routes/');
@@ -12,18 +13,34 @@ app.set('view engine', 'pug');
 
 app.use(express.static(join(__dirname, 'public')));
 
+app.use(bodyParser.urlencoded({extended: false}));
+
 app.use('/', home);
 app.use('/books', books);
 
 app.use((err, req, res, next) => {
-    console.error(err);
-    res.status(err.status || 500);
-    res.render('error', {
-        title: 'Error', 
-        status: err.status, 
-        message: err.message
-    });
+    if (err.status) {
+        console.error(err);
+        res.status(err.status);
+        return res.render('error', {
+            title: 'Error',
+            status: err.status,
+            message: err.message
+        });
+    }
+
+    next(err);
 });
+
+app.use((err, req, res, next) => {
+    console.error(err);
+    res.status(500);
+    res.render('error', {
+        title: 'Error',
+        status: 500,
+        message: 'Server error, please try again later.'
+    });
+})
 
 Book
 .sync()

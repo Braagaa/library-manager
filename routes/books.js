@@ -4,13 +4,16 @@ const R = require('ramda');
 const {
     passOrThrow, 
     createErrorNext, 
-    isStringNumber
+    isStringNumber,
+    whenValidationError,
+    getErrors
 } = require('../modules/validation');
 
 const router = express.Router();
 
 const render = R.invoker(2, 'render');
 const redirect = R.invoker(1, 'redirect');
+const update = R.invoker(0, 'update');
 
 router.get('/', (req, res) => {
     Books.findAll()
@@ -36,6 +39,20 @@ router.get('/:id', (req, res, next) => {
     } else {
         createErrorNext(['Not an ID book number.', 400], next)();
     }
+});
+
+router.post('/new', (req, res, next) => {
+    Books.create(req.body)
+        .then(R.partial(redirect, ['/', res]))
+        .catch(R.pipe(
+            R.applySpec({
+                title: R.always('New Book'),
+                book: R.always(Books.build(req.body)),
+                neededAttributes: getErrors
+            }),
+            render('new-book', R.__, res)
+        ))
+        .catch(next);
 });
 
 module.exports = router;

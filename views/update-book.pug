@@ -4,7 +4,7 @@ block content
     include ./mixins/book-input.pug
     include ./mixins/buttons.pug
     h1 Update Book
-    form
+    form(method="POST" action="")
         +book-attribute('title', book.title)
         +book-attribute('author', book.author)
         +book-attribute('genre', book.genre)

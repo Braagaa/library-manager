@@ -4,10 +4,11 @@ block content
     include ./mixins/book-input.pug
     include ./mixins/buttons.pug
     h1 New Book
-    form
-        +book-attribute('title')
-        +book-attribute('author')
-        +book-attribute('genre')
-        +book-attribute('year')
+    include form-error
+    form(method="POST" action="/books/new")
+        +book-attribute('title', book ? book.title : null)
+        +book-attribute('author', book ? book.author : null)
+        +book-attribute('genre', book ? book.genre : null)
+        +book-attribute('year', book ? book.year : null)
         +submit('Create New Book')
         +main-button('/books', 'Cancel')
