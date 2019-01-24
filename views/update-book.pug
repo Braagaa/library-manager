@@ -1,0 +1,15 @@
+extends layout
+
+block content
+    include ./mixins/book-input.pug
+    include ./mixins/buttons.pug
+    h1 Update Book
+    form
+        +book-attribute('title', book.title)
+        +book-attribute('author', book.author)
+        +book-attribute('genre', book.genre)
+        +book-attribute('year', book.year)
+        +submit('Update Book')
+    form(method="POST" action=`books/${book.id}/delete`)
+        +main-button('/books', 'Cancel')
+        +submit('Delete Book')

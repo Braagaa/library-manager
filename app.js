@@ -15,6 +15,16 @@ app.use(express.static(join(__dirname, 'public')));
 app.use('/', home);
 app.use('/books', books);
 
+app.use((err, req, res, next) => {
+    console.error(err);
+    res.status(err.status || 500);
+    res.render('error', {
+        title: 'Error', 
+        status: err.status, 
+        message: err.message
+    });
+});
+
 Book
 .sync()
 .then(() => app.listen(app.get('port')));

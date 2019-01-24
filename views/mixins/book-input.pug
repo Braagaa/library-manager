@@ -1,0 +1,4 @@
+mixin book-attribute(attr, value)
+    p
+        label(for=attr) #{attr.charAt(0).toUpperCase() + attr.slice(1)}
+        input(name=attr type="text" id=attr value=value ? value : '')

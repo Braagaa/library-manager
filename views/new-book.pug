@@ -1,21 +1,13 @@
 extends layout
 
 block content
+    include ./mixins/book-input.pug
+    include ./mixins/buttons.pug
     h1 New Book
     form
-        p
-            label(for="title") Title
-            input(name="title" type="text" id="title")
-        p
-            label(for="author") Author
-            input(name="author" type="text" id="author")
-        p
-            label(for="genre") Genre
-            input(name="genre" type="text" id="genre")
-        p
-            label(for="year") Year
-            input(name="year" type="text" id="year")
-        p
-            input(type="submit" value="Create New Book")
-        p
-            a.button(href="/books") Cancel
+        +book-attribute('title')
+        +book-attribute('author')
+        +book-attribute('genre')
+        +book-attribute('year')
+        +submit('Create New Book')
+        +main-button('/books', 'Cancel')
