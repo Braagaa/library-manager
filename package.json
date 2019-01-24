@@ -5,8 +5,9 @@
   "main": "index.js",
   "scripts": {
     "server": "node app.js",
-    "proxy": "delay 3 && browser-sync start --proxy localhost:3000 --files app.js --watch app.js",
+    "proxy": "delay 3 && browser-sync start --proxy localhost:3000 --files ./views/*pug",
     "open": "start http://localhost:3000/",
+    "vim": "vim app.js routes/*.js views/*.pug",
     "start": "npm-run-all --parallel server proxy",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

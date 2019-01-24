@@ -1,0 +1,22 @@
+extends layout
+
+block content
+    h1 Books
+    p
+        a.button(href='/books/new') Create New Book
+    table
+        thead
+            tr
+                th Title
+                th Author
+                th Genre
+                th Year
+        tbody
+            - books.forEach(({id, title, author, genre, year}) => {
+              tr
+                td
+                    a(href=`/books/${id}`)= title
+                td= author
+                td= genre
+                td= year
+            - })
