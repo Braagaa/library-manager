@@ -6,6 +6,7 @@ const {
     createErrorNext, 
     isStringNumber,
     whenValidationError,
+    whenNull,
     getErrors
 } = require('../modules/validation');
 
@@ -13,7 +14,9 @@ const router = express.Router();
 
 const render = R.invoker(2, 'render');
 const redirect = R.invoker(1, 'redirect');
-const update = R.invoker(0, 'update');
+const update = R.invoker(1, 'update');
+
+const addId = R.useWith(R.pipe, [R.always, R.assoc('id')]);
 
 router.get('/', (req, res) => {
     Books.findAll()
@@ -35,7 +38,10 @@ router.get('/:id', (req, res, next) => {
                 book: R.identity
             }))
             .then(render('update-book', R.__, res))
-            .catch(createErrorNext(['Could not find book.', 400], next));
+            .catch(whenNull(
+                createErrorNext(['Could not find book.', 400], next)
+            ))
+            .catch(next);
     } else {
         createErrorNext(['Not an ID book number.', 400], next)();
     }
@@ -53,6 +59,25 @@ router.post('/new', (req, res, next) => {
             render('new-book', R.__, res)
         ))
         .catch(next);
+});
+
+router.post('/:id', (req, res, next) => {
+    if (isStringNumber(req.params.id)) {
+        Books.findByPk(req.params.id)
+            .then(update(req.body))
+            .then(R.partial(redirect, ['/', res]))
+            .catch(whenValidationError(R.pipe(
+                R.applySpec({
+                    title: R.always(req.body.title || 'Update'),
+                    book: addId(req.body, req.params.id),
+                    neededAttributes: getErrors
+                }),
+                render('update-book', R.__, res)
+            )))
+            .catch(next);
+    } else {
+        createErrorNext(['Not an ID book number.', 400], next)();
+    }
 });
 
 module.exports = router;

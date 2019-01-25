@@ -20,10 +20,11 @@ const createErrorNext = R.useWith(
 
 const isStringNumber = R.complement(isNaN);
 
-const whenValidationError = R.when(
-    R.eqProps('name', 'SequelizeValidationError'), 
-    R.__
+const whenOrThrow = R.ifElse(R.__, R.__, throww);
+const whenValidationError = whenOrThrow(
+    R.propEq('name', 'SequelizeValidationError'), 
 );
+const whenNull = whenOrThrow(R.isNil);
 
 const getErrors = R.pipe(
     R.prop('errors'), 
@@ -36,5 +37,6 @@ module.exports = {
     createErrorNext, 
     isStringNumber, 
     whenValidationError,
+    whenNull,
     getErrors
 };
