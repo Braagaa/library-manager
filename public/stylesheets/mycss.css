@@ -1,0 +1,53 @@
+/** Searchbar **/
+.search-container {
+    display: flex;
+    margin-bottom: 20px;
+}
+
+.search-container .button,
+.search-container input {
+    margin: 0px;
+}
+
+.search-container input {
+    margin-left: 200px;
+}
+
+/** Pagination **/
+.pagination {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.pagination__input span form {
+    display: inline-block;
+}
+
+.pagination__page,
+.pagination__back {
+    padding: 0 5px;
+}
+
+.pagination__input input {
+    width: 80px;
+    /**border: 3px solid #019875;**/
+}
+
+.pagination__input span span {
+    margin: 0 5px;
+}
+
+.pagination__back img,
+.pagination__forward img {
+    cursor: pointer;
+}
+
+.pagination__forward img {
+    transform: rotate(180deg);
+}
+
+/** Highlights **/
+.highlight {
+    color: #980124;
+}

@@ -1,17 +1,20 @@
 extends layout
 
 block content
+    include mixins/buttons.pug
     h1 Books
-    p
-        a.button(href='/books/new') Create New Book
+    form
+        .search-container
+            a.button(href="/books/new") Create New Book
+            input#search(type="text" placeholder="Search...")
     table
         thead
             tr
-                th Title
+                th#title-header Title
                 th Author
                 th Genre
                 th Year
-        tbody
+        tbody#books
             - books.forEach(({id, title, author, genre, year}) => {
               tr
                 td
@@ -20,3 +23,14 @@ block content
                 td= genre
                 td= year
             - })
+    ul.pagination
+        li.pagination__page Page:
+        li.pagination__input
+            span
+                form
+                    input(value= 1)
+                span of 1
+        li.pagination__back
+            img(src="/img/left.svg")
+        li.pagination__forward
+            img(src="/img/left.svg")

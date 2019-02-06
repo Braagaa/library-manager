@@ -1,4 +1,5 @@
 const R = require('ramda');
+const isNumber = require('is-number');
 const {capitalize} = require('./utils');
 
 const throww = val => {
@@ -18,7 +19,10 @@ const createErrorNext = R.useWith(
     [R.partial(createError), R.identity]
 );
 
-const isStringNumber = R.complement(isNaN);
+const whenNotNumber = R.useWith(
+    R.call, 
+    [R.pipe(R.always, R.unless(isNumber)), R.identity]
+);
 
 const whenOrThrow = R.ifElse(R.__, R.__, throww);
 const whenValidationError = whenOrThrow(
@@ -35,7 +39,7 @@ const getErrors = R.pipe(
 module.exports = {
     passOrThrow, 
     createErrorNext, 
-    isStringNumber, 
+    whenNotNumber,
     whenValidationError,
     whenNull,
     getErrors
