@@ -8,7 +8,7 @@
     "proxy": "delay 3 && browser-sync start --proxy localhost:3000 --files ./views/*.pug ./public/stylesheets/*.css ./public/js/bundle.js",
     "bundle": "browserify ./public/js/app.js > ./public/js/bundle.js",
     "watch": "onchange ./public/js/app.js -- npm run bundle",
-    "vim": "vim app.js routes/*.js views/**/*.pug views/*pug",
+    "vim": "vim app.js routes/*.js views/**/*.pug views/*pug public/js/*.js",
     "start": "npm-run-all --sequential bundle --parallel server proxy watch",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

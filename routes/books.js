@@ -9,6 +9,7 @@ const {
     whenNull,
     getErrors
 } = require('../modules/validation');
+const {renameKeys, addProps, numberOfPages} = require('../modules/utils');
 
 const router = express.Router();
 
@@ -21,9 +22,11 @@ const defaultNum = whenNotNumber(-1);
 const addId = R.useWith(R.pipe, [R.always, R.assoc('id')]);
 
 router.get('/', (req, res, next) => {
-    return Books.findAll()
-        .then(R.objOf('books'))
-        .then(R.mergeRight({title: 'Books'}))
+    const paginationNum = req.app.get('paginationNum');
+    return Books.findAndCountAll({limit: paginationNum})
+        .then(renameKeys({rows: 'books'}))
+        .then(addProps({lastPage: numberOfPages(paginationNum)}))
+        .then(R.mergeRight({title: 'Books', currentPage: 1}))
         .then(render('index', R.__, res))
         .catch(next);
 });

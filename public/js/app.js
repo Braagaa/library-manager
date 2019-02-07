@@ -1,5 +1,6 @@
 const {fromEvent, from, timer, of} = require('rxjs'); 
-const {flatMap, map, filter, mapTo, reduce, debounce, pluck, tap} = require('rxjs/operators');
+const {flatMap, map, filter, mapTo, debounce, pluck, tap} = require('rxjs/operators');
+const isNumber = require('is-number');
 const R = require('ramda');
 const axios = require('axios');
 
@@ -9,12 +10,15 @@ const forwardpage = document.querySelector('.pagination__forward');
 const potentialPage = document.querySelector('.pagination__input input');
 const titleHeader = document.getElementById('title-header');
 const booksTable = document.getElementById('books');
+const pagesCount = document.getElementById('pages');
 
 const json = R.invoker(0, 'json');
 const toggle = R.invoker(1, 'toggle');
 
 const targetValueLowerCase = R.pipe(R.path(['target', 'value']), R.toLower);
+const valueLowerCase = R.pipe(R.prop('value'), R.toLower);
 const jsonTodata = R.pipe(json, R.prop('data'));
+const calls = R.zipWith(R.call);
 
 //DOM function
 const createRow = ({id, title, author, genre, year}) => {
@@ -42,6 +46,24 @@ const htmlRows = searchValue => books => R.pipe(
     R.join('')
 )(books);
 
+const getLastpageValue = R.pipe(
+    R.prop('textContent'),
+    R.split(' '),
+    R.nth(1),
+    parseFloat
+);
+
+const addSearchValueAsPair = R.pipe(
+    R.pair(searchbar), 
+    R.adjust(0, valueLowerCase)
+);
+
+const pageCountValidation = countElement => num =>
+R.pipe(
+    getLastpageValue,
+    R.clamp(1, R.__, num)
+)(countElement);
+
 fromEvent(searchbar, 'keyup').pipe(
     debounce(R.partial(timer, [800])),
     map(targetValueLowerCase),
@@ -50,17 +72,44 @@ fromEvent(searchbar, 'keyup').pipe(
             map(R.concat('/api/')),
             flatMap(axios),
             pluck('data', 'data'),
-            map(htmlRows(searchValue)),
+            map(R.evolve({books: htmlRows(searchValue)}))
         );
     })
 )
-.subscribe(htmlBooks => {
-    booksTable.innerHTML = htmlBooks;
+.subscribe(({books, lastPage}) => {
+    booksTable.innerHTML = books;
+    pages.textContent = `of ${lastPage}`;
+    potentialPage.value = 1;
+    potentialPage.disabled = false;
+    if (lastPage === 0) {
+        potentialPage.value = 0;
+        potentialPage.disabled = true;
+    }
 });
 
-fromEvent(backpage, 'click').pipe(
-    mapTo(potentialPage),
-    map(R.prop('value'))
+fromEvent(potentialPage, 'change').pipe(
+    pluck('target', 'value'),
+    filter(isNumber),
+    map(parseFloat),
+    map(pageCountValidation(pagesCount)),
+    tap(num => potentialPage.value = num),
+    map(addSearchValueAsPair),
+    flatMap(([searchValue, page]) => {
+        return of(`/api/${searchValue}/${page}`).pipe(
+            flatMap(axios),
+            pluck('data', 'data'),
+            map(R.evolve({books: htmlRows(searchValue)}))
+        );
+    })
+)
+.subscribe(({books, lastPage}) => {
+    booksTable.innerHTML = books;
+    pages.textContent = `of ${lastPage}`;
+});
+
+fromEvent(forwardpage, 'click').pipe(
+    mapTo([potentialPage, searchbar]),
+    map(calls([R.prop('value'), valueLowerCase]))
 )
 .subscribe(console.log);
 
