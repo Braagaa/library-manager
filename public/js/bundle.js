@@ -23944,12 +23944,18 @@ R.pipe(
     R.clamp(1, R.__, num)
 )(countElement);
 
+const cleanInputNumber = R.pipe(
+    R.prop('value'),
+    R.unless(isNumber, R.always(0)),
+    parseFloat
+);
+
 fromEvent(searchbar, 'keyup').pipe(
     debounce(R.partial(timer, [800])),
     map(targetValueLowerCase),
     flatMap(searchValue => {
         return of(searchValue).pipe(
-            map(R.concat('/api/')),
+            map(R.concat('/api/1/')),
             flatMap(axios),
             pluck('data', 'data'),
             map(R.evolve({books: htmlRows(searchValue)}))
@@ -23967,31 +23973,45 @@ fromEvent(searchbar, 'keyup').pipe(
     }
 });
 
-fromEvent(potentialPage, 'change').pipe(
-    pluck('target', 'value'),
-    filter(isNumber),
-    map(parseFloat),
+const apiWithPage = obs => obs.pipe(
     map(pageCountValidation(pagesCount)),
     tap(num => potentialPage.value = num),
     map(addSearchValueAsPair),
     flatMap(([searchValue, page]) => {
-        return of(`/api/${searchValue}/${page}`).pipe(
+        return of(`/api/${page}/${searchValue}`).pipe(
             flatMap(axios),
             pluck('data', 'data'),
             map(R.evolve({books: htmlRows(searchValue)}))
         );
     })
-)
-.subscribe(({books, lastPage}) => {
+);
+
+const incDecPage$ = (element, incOrDecFunc) => 
+    fromEvent(element, 'click').pipe(
+        mapTo(potentialPage),
+        map(cleanInputNumber),
+        filter(R.lt(0)),
+        map(incOrDecFunc),
+        of,
+        flatMap(apiWithPage)
+    );
+
+const updateBooksHTML = ({books, lastPage}) => {
     booksTable.innerHTML = books;
     pages.textContent = `of ${lastPage}`;
-});
+}
 
-fromEvent(forwardpage, 'click').pipe(
-    mapTo([potentialPage, searchbar]),
-    map(calls([R.prop('value'), valueLowerCase]))
+fromEvent(potentialPage, 'change').pipe(
+    pluck('target', 'value'),
+    filter(isNumber),
+    map(parseFloat),
+    of,
+    flatMap(apiWithPage)
 )
-.subscribe(console.log);
+.subscribe(updateBooksHTML);
+
+incDecPage$(forwardpage, R.inc).subscribe(updateBooksHTML);
+incDecPage$(backpage, R.dec).subscribe(updateBooksHTML);
 
 fromEvent(titleHeader, 'click').pipe(
     map(R.prop('target')),

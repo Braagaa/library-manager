@@ -20,16 +20,25 @@ router.get('/', (req, res, next) => {
         .then(json(R.__, res));
 });
 
-router.get('/:title', ({params: {title}}, res, next) => {
-    res.redirect(`/api/${title}/1`);
+router.get('/:page', (req, res, next) => {
+    const pag = req.app.get('paginationNum');
+    Books.findAndCountAll({
+        limit: pag, 
+        offset: pag * (parseFloat(req.params.page) - 1)
+    })
+        .then(renameRows)
+        .then(addProps({lastPage: numberOfPages(pag)}))
+        .then(dataOkay)
+        .then(json(R.__, res));
 });
 
-router.get('/:title/:page', (req, res, next) => {
+router.get('/:page/:title', (req, res, next) => {
     const pag = req.app.get('paginationNum');
+    const title = req.params.title;
     Books.findAndCountAll({
         where: {
             title: {
-                [Op.like]: `%${req.params.title}%`
+                [Op.like]: `%${title}%`
             }
         },
         limit: pag,

@@ -11,7 +11,7 @@ app.set('port', process.env.PORT || 3000);
 
 app.set('views', join(__dirname, 'views'));
 app.set('view engine', 'pug');
-app.set('paginationNum', 3);
+app.set('paginationNum', 5);
 
 app.use(log('dev'));
 app.use(express.static(join(__dirname, 'public')));
