@@ -16,8 +16,8 @@
 /** Pagination **/
 .pagination {
     display: flex;
-    justify-content: flex-end;
     align-items: center;
+    margin-top: 2.3em;
 }
 
 .pagination__input span form {
@@ -31,7 +31,6 @@
 
 .pagination__input input {
     width: 80px;
-    /**border: 3px solid #019875;**/
 }
 
 .pagination__input span span {
@@ -52,7 +51,11 @@
     color: #980124;
 }
 
-/** Column Headers **/
+/** Basics **/
 thead tr th {
     cursor: pointer;
+}
+
+input:focus {
+    border: 2px solid #019875;
 }
