@@ -17,7 +17,8 @@ router.get('/', (req, res, next) => {
         .then(renameRows)
         .then(addProps({lastPage: numberOfPages(pag)}))
         .then(dataOkay)
-        .then(json(R.__, res));
+        .then(json(R.__, res))
+        .catch(next);
 });
 
 router.get('/:page', (req, res, next) => {
@@ -29,7 +30,8 @@ router.get('/:page', (req, res, next) => {
         .then(renameRows)
         .then(addProps({lastPage: numberOfPages(pag)}))
         .then(dataOkay)
-        .then(json(R.__, res));
+        .then(json(R.__, res))
+        .catch(next);
 });
 
 router.get('/:page/:title', (req, res, next) => {
@@ -47,7 +49,8 @@ router.get('/:page/:title', (req, res, next) => {
         .then(renameRows)
         .then(addProps({lastPage: numberOfPages(pag)}))
         .then(dataOkay)
-        .then(json(R.__, res));
+        .then(json(R.__, res))
+        .catch(next);
 });
 
 module.exports = router;
