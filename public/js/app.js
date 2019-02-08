@@ -8,17 +8,23 @@ const searchbar = document.getElementById('search');
 const backpage = document.querySelector('.pagination__back');
 const forwardpage = document.querySelector('.pagination__forward');
 const potentialPage = document.querySelector('.pagination__input input');
-const titleHeader = document.getElementById('title-header');
+const columns = document.querySelector('thead tr');
 const booksTable = document.getElementById('books');
 const pagesCount = document.getElementById('pages');
 
 const json = R.invoker(0, 'json');
 const toggle = R.invoker(1, 'toggle');
+const remove = R.invoker(1, 'remove');
+const appendChild = R.invoker(1, 'appendChild');
+const removeChild = R.invoker(1, 'removeChild');
+
+const classListFn = fn => arg => R.pipe(R.prop('classList'), fn(arg));
+const toggleClass = classListFn(toggle);
+const removeClass = classListFn(remove);
 
 const targetValueLowerCase = R.pipe(R.path(['target', 'value']), R.toLower);
 const valueLowerCase = R.pipe(R.prop('value'), R.toLower);
 const jsonTodata = R.pipe(json, R.prop('data'));
-const calls = R.zipWith(R.call);
 
 //DOM function
 const createRow = ({id, title, author, genre, year}) => {
@@ -71,7 +77,7 @@ const cleanInputNumber = R.pipe(
 );
 
 fromEvent(searchbar, 'keyup').pipe(
-    debounce(R.partial(timer, [800])),
+    debounce(R.partial(timer, [500])),
     map(targetValueLowerCase),
     flatMap(searchValue => {
         return of(searchValue).pipe(
@@ -133,8 +139,39 @@ fromEvent(potentialPage, 'change').pipe(
 incDecPage$(forwardpage, R.inc).subscribe(updateBooksHTML);
 incDecPage$(backpage, R.dec).subscribe(updateBooksHTML);
 
-fromEvent(titleHeader, 'click').pipe(
-    map(R.prop('target')),
-    tap(R.pipe(R.prop('classList'), toggle('desc')))
+const sortColumn = colHeaderElm => {
+    const index = R.indexOf(
+        colHeaderElm, 
+        colHeaderElm.parentElement.children
+    );
+    const rows = colHeaderElm
+        .parentElement
+        .parentElement
+        .nextElementSibling
+        .children;
+    const rowsChidlren = R.map(R.prop('children'), rows);
+    const colm = R.map(R.nth(index), rowsChidlren);
+    return colHeaderElm.classList.contains('asc') ? 
+        R.sort(R.ascend(R.prop('textContent')), colm) :
+        R.sort(R.descend(R.prop('textContent')), colm); 
+};
+
+const removeAllOtherAscClassHeaders = R.pipe(
+    R.complement(R.equals),
+    R.filter(R.__, columns.children),
+    R.forEach(removeClass('asc'))
+);
+
+const resortBooksTable = R.forEach(R.pipe(
+    removeChild(R.__, booksTable),
+    appendChild(R.__, booksTable)
+));
+
+fromEvent(columns, 'click').pipe(
+    pluck('target'),
+    tap(removeAllOtherAscClassHeaders),
+    tap(toggleClass('asc')),
+    map(sortColumn),
+    map(R.map(R.prop('parentElement')))
 )
-.subscribe(console.log);
+.subscribe(resortBooksTable);

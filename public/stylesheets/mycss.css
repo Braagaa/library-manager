@@ -51,3 +51,8 @@
 .highlight {
     color: #980124;
 }
+
+/** Column Headers **/
+thead tr th {
+    cursor: pointer;
+}
