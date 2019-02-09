@@ -14,7 +14,7 @@ a {
     color: black;
   }
 
-a.button, input[type=submit] {
+a.button, input[type=submit], input[type=button] {
   color: white;
   background: #019875;
   font-family: "Lucida Grande", Helvetica, Arial, sans-serif;
@@ -24,16 +24,16 @@ a.button, input[type=submit] {
   cursor: pointer;
 }
 
-form a.button, input[type=submit] {
+form a.button, input[type=submit], input[type=button] {
   margin-left: 140px;
   transition: 0.4s;
 }
 
-input[type=submit] {
+input[type=submit], input[type=button] {
   border: 0;
 }
 
-  a.button:hover, input[type=submit]:hover {
+  a.button:hover, input[type=submit]:hover, input[type=button]:hover {
     background-color: #01b189;
   }
 

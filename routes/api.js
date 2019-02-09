@@ -37,11 +37,17 @@ router.get('/:page', (req, res, next) => {
 router.get('/:page/:title', (req, res, next) => {
     const pag = req.app.get('paginationNum');
     const title = req.params.title;
+    const searchObj = {[Op.like]: `%${title}%`};
     Books.findAndCountAll({
         where: {
-            title: {
-                [Op.like]: `%${title}%`
-            }
+            [Op.or]: [
+                {
+                    title: searchObj
+                },
+                {
+                    author: searchObj
+                }
+            ]
         },
         limit: pag,
         offset: pag * (parseFloat(req.params.page) - 1)

@@ -11,6 +11,17 @@ block content
         +book-attribute('genre', book.genre)
         +book-attribute('year', book.year)
         +submit('Update Book')
-    form(method="POST" action=`/books/${book.id}/delete`)
+    form
         +main-button('/books', 'Cancel')
-        +submit('Delete Book')
+        p
+            input#delete(type="button" value="Delete Book")
+    div.dialog
+        div.content
+            h3 Are you sure you want to delete
+            h3 #{book.title} ?
+            form(method="POST" action=`/books/${book.id}/delete`)
+                p
+                    input(type="submit" value="Yes I Do")
+                    a.button(href="/books") No Way
+    div.overlay
+    script(src="/js/dialog.js")

@@ -59,3 +59,62 @@ thead tr th {
 input:focus {
     border: 2px solid #019875;
 }
+
+/** Dialog **/
+.dialog {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 50%;
+    max-width: 630px;
+    min-width: 320px;
+    height: 50%;
+    z-index: 10;
+    visibility: hidden;
+    backface-visibility: hidden;
+    transform: translatex(-50%) translatey(-50%);
+}
+
+.dialog .content {
+    color: #fff;
+    text-align: center;
+    font-size: 1.5em;
+    transform: scale(0.8);
+    opacity: 0;
+    transition: all 0.3s;
+}
+
+.dialog .content--show {
+    transform: scale(1);
+    opacity: 1;
+    visibility: visible;
+}
+
+.dialog p {
+    display: flex;
+    margin: auto;
+}
+
+.dialog input {
+    font-weight: bold;
+}
+
+.overlay {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    visibility: hidden;
+    top: 0;
+    left: 0;
+    z-index: 5;
+    opacity: 0;
+    background: rgba(152, 1, 36, 0.8);
+    transition: all 0.3s;
+}
+
+.overlay--show {
+    background: rgba(152, 1, 36, 0.9);
+    background: rgba(1, 152, 117, 0.9);
+    opacity: 1;
+    visibility: visible;
+}
