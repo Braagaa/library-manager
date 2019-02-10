@@ -96,8 +96,10 @@ input:focus {
     margin: auto;
 }
 
-.dialog input {
+.dialog input,
+.dialog a {
     font-weight: bold;
+    margin: auto;
 }
 
 .overlay {
