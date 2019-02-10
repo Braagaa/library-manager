@@ -83,7 +83,6 @@ router.post('/:id', (req, res, next) => {
 });
 
 router.post('/:id/delete', (req, res, next) => {
-    //add a warning to user to indicate later on
     Books.findByPk(defaultNum(req.params.id))
         .then(passOrThrow(R.isNil))
         .then(destroy)

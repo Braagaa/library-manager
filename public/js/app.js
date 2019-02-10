@@ -24,7 +24,6 @@ const removeClass = classListFn(remove);
 
 const targetValueLowerCase = R.pipe(R.path(['target', 'value']), R.toLower);
 const valueLowerCase = R.pipe(R.prop('value'), R.toLower);
-const jsonTodata = R.pipe(json, R.prop('data'));
 
 //DOM function
 const createRow = ({id, title, author, genre, year}) => {
@@ -39,15 +38,19 @@ const createRow = ({id, title, author, genre, year}) => {
         </tr>`;
 };
 
-const highlightUrl = searchValue => book => R.evolve({
-    title: R.replace(
+const highlightText = searchValue => book => R.unless(
+    R.pipe(R.always(searchValue), R.isEmpty),
+    R.map(R.replace(
         new RegExp(`(${searchValue})`, 'ig'), 
-        '<span class="highlight">$1</span>'
-    )
-})(book);
+        `<span class="highlight">$1</span>`
+    )),
+    book
+);
 
 const htmlRows = searchValue => books => R.pipe(
-    R.map(highlightUrl(searchValue)),
+    R.map(R.evolve({id: R.toString, year: R.toString})),
+    R.map(highlightText(searchValue)),
+    R.tap(console.log),
     R.map(createRow), 
     R.join('')
 )(books);
@@ -129,7 +132,7 @@ const updateBooksHTML = ({books, lastPage}) => {
 
 fromEvent(potentialPage, 'change').pipe(
     pluck('target', 'value'),
-    filter(isNumber),
+    map(R.unless(isNumber, R.always(1))),
     map(parseFloat),
     of,
     flatMap(apiWithPage)

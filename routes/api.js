@@ -40,14 +40,10 @@ router.get('/:page/:title', (req, res, next) => {
     const searchObj = {[Op.like]: `%${title}%`};
     Books.findAndCountAll({
         where: {
-            [Op.or]: [
-                {
-                    title: searchObj
-                },
-                {
-                    author: searchObj
-                }
-            ]
+            [Op.or]: R.map(
+                R.objOf(R.__, searchObj), 
+                ['title', 'author', 'genre', 'year']
+            )
         },
         limit: pag,
         offset: pag * (parseFloat(req.params.page) - 1)

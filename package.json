@@ -9,7 +9,8 @@
     "bundle": "browserify ./public/js/app.js > ./public/js/bundle.js",
     "watch": "onchange ./public/js/app.js -- npm run bundle",
     "vim": "vim app.js routes/*.js views/**/*.pug views/*pug public/js/*.js",
-    "start": "npm-run-all --sequential bundle --parallel server proxy watch",
+    "start:dev": "npm-run-all --sequential bundle --parallel server proxy watch",
+    "start": "open-cli http://localhost:3000 && node app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Michael Braga",
@@ -17,16 +18,15 @@
   "devDependencies": {
     "browser-sync": "^2.26.3",
     "browserify": "^16.2.3",
-    "csso": "^3.5.1",
     "delay-cli": "^1.1.0",
     "npm-run-all": "^4.1.5",
-    "onchange": "^5.2.0"
+    "onchange": "^5.2.0",
+    "open-cli": "^1.0.5"
   },
   "dependencies": {
     "axios": "^0.18.0",
     "body-parser": "^1.18.3",
     "express": "^4.16.4",
-    "indexes-of": "^1.0.1",
     "is-number": "^7.0.0",
     "morgan": "^1.9.1",
     "pug": "^2.0.3",
@@ -34,6 +34,7 @@
     "rxjs": "^6.3.3",
     "sequelize": "^4.42.0",
     "sequelize-cli": "^5.4.0",
+    "serve-favicon": "^2.5.0",
     "sqlite3": "^4.0.6"
   }
 }

@@ -1,6 +1,7 @@
 const express = require('express');
 const log = require('morgan');
 const bodyParser = require('body-parser');
+const favicon = require('serve-favicon');
 const {join} = require('path');
 const {Book} = require('./models/');
 const {home, books, api} = require('./routes/');
@@ -16,6 +17,7 @@ app.set('paginationNum', 5);
 app.use(log('dev'));
 app.use(express.static(join(__dirname, 'public')));
 app.use(bodyParser.urlencoded({extended: false}));
+app.use(favicon(join(__dirname, 'public', 'img', 'favicon.ico')));
 
 app.use('/', home);
 app.use('/books', books);
