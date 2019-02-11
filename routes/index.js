@@ -8,6 +8,11 @@ const transformObj = R.converge(
     [R.slice(0, -3), R.pipe(join(__dirname), require)]
 );
 
+/*
+ * This index file gathers all the .js files in the current directory (which
+ * assumes to be routes), concatenates them into one major Object and 
+ * exports it.
+ */
 const routes = R.pipe(
     readdirSync,
     R.filter(R.pipe(R.slice(-3, Infinity), R.equals('.js'))),

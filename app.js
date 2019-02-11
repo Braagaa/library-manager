@@ -12,6 +12,8 @@ app.set('port', process.env.PORT || 3000);
 
 app.set('views', join(__dirname, 'views'));
 app.set('view engine', 'pug');
+
+//This sets the number of books listed per page
 app.set('paginationNum', 5);
 
 app.use(log('dev'));
@@ -23,11 +25,13 @@ app.use('/', home);
 app.use('/books', books);
 app.use('/api', api);
 
+//404 Error Page middleware
 app.use((req, res, next) => {
     res.status(404);
     res.render('page-not-found', {title: 'Page Not Found'});
 });
 
+//custom Error Page middleware
 app.use((err, req, res, next) => {
     if (err.status) {
         console.error(err);
@@ -42,6 +46,7 @@ app.use((err, req, res, next) => {
     next(err);
 });
 
+//last resort server error middleware
 app.use((err, req, res, next) => {
     console.error(err);
     res.status(500);

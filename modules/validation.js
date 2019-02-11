@@ -14,16 +14,19 @@ const createError = R.curry((message, status) => {
     return err;
 });
 
+//creates a new Error Object and sends it to a send function (next function)
 const createErrorNext = R.useWith(
     R.pipe, 
     [R.partial(createError), R.identity]
 );
 
+//when value sent cant be converted to a number call the sent function
 const whenNotNumber = R.useWith(
     R.call, 
     [R.pipe(R.always, R.unless(isNumber)), R.identity]
 );
 
+//needs a predicate and successful function
 const whenOrThrow = R.ifElse(R.__, R.__, throww);
 const whenValidationError = whenOrThrow(
     R.propEq('name', 'SequelizeValidationError'), 
